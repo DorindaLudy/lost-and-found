@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found</title>
+    <!-- Linking font awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header/Navbar -->
+    <header>
+        <nav class="navbar section-content">
+            <a href="#home" class="nav-logo">
+                <h2 class="logo-text">Lost & Found 🔍</h2>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="report.html" class="nav-link">Report Found Item</a>
+                </li>
+                <li class="nav-item">
+                    <a href="search.html" class="nav-link">Search Item</a>
+                </li>
+                <li class="nav-item">
+                    <a href="claim-inquiry.html" class="nav-link">Claim / Inquiry Form</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-login.html" class="nav-link">Admin</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+    <div class="section-content">
+        <div class="hero-details">
+            <h2 class="title">Lost Something?</h2>
+            <p class="description">This online Lost & Found website allows you to report a found 
+            item, search for your lost items, claim an item, or submit a question about an item.</p>
+        </div>
+        <div class="hero-image-wrapper">
+                <img src="images/hero-image-box.png" alt="Hero" class="hero-image">
+            </div>
+    </div>
+    </section>
+<div id="items-container"></div>
+</body>
+</html>
+
+<script>
+async function loadItems() {
+    const response = await fetch('/items');
+    const items = await response.json();
+
+    const container = document.getElementById("items-container");
+    container.innerHTML = "";
+
+    items.forEach(item => {
+        container.innerHTML += `
+            <div>
+                <h3>${item.name}</h3>
+                <p>${item.description}</p>
+                <p>ID: ${item.id}</p>
+            </div>
+        `;
+    });
+}
+
+loadItems();
+</script>

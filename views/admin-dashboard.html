@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found</title>
+    <!-- Linking font awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header/Navbar -->
+     <header>
+        <nav class="navbar section-content">
+            <a href="#home" class="nav-logo">
+                <h2 class="logo-text">Lost & Found 🔍</h2>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="report.html" class="nav-link">Report Found Item</a>
+                </li>
+                <li class="nav-item">
+                    <a href="search.html" class="nav-link">Search Item</a>
+                </li>
+                <li class="nav-item">
+                    <a href="claim-inquiry.html" class="nav-link">Claim / Inquiry Form</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-login.html" class="nav-link">Admin</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+<section class="page-content">
+    <div class="section-content">
+        <h2 class="section-title">Admin Dashboard</h2>
+
+        <div id="admin-items"></div>
+        <div id="admin-claims"></div>
+
+        <a href="/admin-logout" class="logout-btn">Logout</a>
+    </div>
+</section>
+
+
+
+<script>
+async function loadAdminData() {
+    const response = await fetch('/admin-data');
+    const data = await response.json();
+
+    const itemsDiv = document.getElementById("admin-items");
+    const claimsDiv = document.getElementById("admin-claims");
+
+    itemsDiv.innerHTML = "<h2>Items</h2>";
+    claimsDiv.innerHTML = "<h2>Claims</h2>";
+
+    data.items.forEach(item => {
+        itemsDiv.innerHTML += `
+            <div class="admin-card">
+                <p><strong>${item.name}</strong> (ID: ${item.id})</p>
+                <p>Status: ${item.approved ? "Approved" : "Pending"}</p>
+
+                ${!item.approved ? `<button onclick="approveItem(${item.id})">Approve</button>` : ""}
+                <button onclick="deleteItem(${item.id})">Delete</button>
+            </div>
+        `;
+    });
+
+    data.claims.forEach(claim => {
+    claimsDiv.innerHTML += `
+        <div class="admin-card">
+            <p><strong>${claim.name}</strong> requested item ${claim.itemId}</p>
+            <p>Type: ${claim.type}</p>
+            <p>${claim.message}</p>
+            <p>Status: ${claim.status}</p>
+
+            ${claim.status === "pending" ? `
+                <button onclick="approveClaim(${claim.id})">Approve</button>
+                <button onclick="rejectClaim(${claim.id})">Reject</button>
+            ` : ""}
+        </div>
+    `;
+});
+
+}
+
+async function approveItem(id) {
+    await fetch('/approve-item/' + id, { method: 'POST' });
+    loadAdminData();
+}
+
+async function deleteItem(id) {
+    await fetch('/delete-item/' + id, { method: 'POST' });
+    loadAdminData();
+}
+
+loadAdminData();
+</script>
+
+
+
+
+</body>
+</html>

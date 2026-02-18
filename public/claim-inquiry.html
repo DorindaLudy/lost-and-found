@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found</title>
+    <!-- Linking font awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+
+</head>
+<body>
+    <!-- Header/Navbar -->
+     <header>
+        <nav class="navbar section-content">
+            <a href="index.html" class="nav-logo">
+                <h2 class="logo-text">Lost & Found 🔍</h2>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="report.html" class="nav-link">Report Found Item</a>
+                </li>
+                <li class="nav-item">
+                    <a href="search.html" class="nav-link">Search Item</a>
+                </li>
+                <li class="nav-item">
+                    <a href="claim-inquiry.html" class="nav-link">Claim / Inquiry Form</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-login.html" class="nav-link">Admin</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+     <section class="claim-inquiry">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+              <div class="col-md-6">
+                
+                <div class="card shadow-lg">
+                  <div class="card-body">
+                    
+                    <h4 class="card-title text-center mb-4">Claim/Inquiry Form</h4>
+                    
+                    <form action="/submit-claim" method="POST">
+                      <!-- <input type="hidden" name="item_id" id="item_id"> -->
+                       <div class="mb-3">
+                        <label class="form-label">Item ID</label>
+                        <input  name="item_id" id="item_id">
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" placeholder="John Doe">
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label">Student Email</label>
+                        <input type="email" class="form-control" name="email" placeholder="@john.doe@gmail.com">
+                      </div>
+
+                      <select name="type" required>
+                        <option value="" disabled selected>Select Request Type</option>
+                        <option value="claim">Claim</option>
+                        <option value="Inquiry">Inquiry</option>
+                      </select>
+          
+                      <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" name="message" rows="3"></textarea>
+                      </div>
+          
+                      <button type="submit" class="btn btn-primary w-100">
+                        Submit
+                      </button>
+                    </form>
+          
+                  </div>
+                </div>
+          
+              </div>
+            </div>
+          </div>
+          
+     </section>
+</body>
+</html>

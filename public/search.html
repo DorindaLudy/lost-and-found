@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found</title>
+    <!-- Linking font awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header/Navbar -->
+     <header>
+        <nav class="navbar section-content">
+            <a href="#home" class="nav-logo">
+                <h2 class="logo-text">Lost & Found 🔍</h2>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="report.html" class="nav-link">Report Found Item</a>
+                </li>
+                <li class="nav-item">
+                    <a href="search.html" class="nav-link">Search Item</a>
+                </li>
+                <li class="nav-item">
+                    <a href="claim-inquiry.html" class="nav-link">Claim / Inquiry Form</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-login.html" class="nav-link">Admin</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+<section class="page-content">
+    <div class="section-content">
+        <h2 class="section-title">Search Found Items</h2>
+
+        <input type="text" id="searchInput" placeholder="Search by name or category">
+
+        <div id="items-container"></div>
+    </div>
+</section>
+<div id="items-container"></div>
+
+<script>
+async function loadItems() {
+    const response = await fetch('/items');
+    const items = await response.json();
+
+    window.allItems = items; // store globally
+    displayItems(items);
+}
+
+function displayItems(items) {
+    const container = document.getElementById("items-container");
+    container.innerHTML = "";
+
+    items.forEach(item => {
+        container.innerHTML += `
+            <div class="item-card">
+                <h3>${item.name}</h3>
+                ${item.photo ? `<img src="/uploads/${item.photo}" width="200">` : ""}
+                <p>${item.description}</p>
+                <p><strong>Category:</strong> ${item.category}</p>
+                <p><strong>ID:</strong> ${item.id}</p>
+            </div>
+        `;
+    });
+}
+
+document.getElementById("searchInput").addEventListener("input", function() {
+    const searchValue = this.value.toLowerCase();
+
+    const filtered = window.allItems.filter(item =>
+        item.name.toLowerCase().includes(searchValue) ||
+        item.category.toLowerCase().includes(searchValue)
+    );
+
+    displayItems(filtered);
+});
+
+loadItems();
+</script>
+
+</body>
+</html>
