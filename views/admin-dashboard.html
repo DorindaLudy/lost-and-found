@@ -57,8 +57,11 @@ async function loadAdminData() {
     const claimsDiv = document.getElementById("admin-claims");
 
     itemsDiv.innerHTML = "<h2>Items</h2>";
-    claimsDiv.innerHTML = "<h2>Claims</h2>";
+    claimsDiv.innerHTML = "";
 
+    // -----------------
+    // ITEMS
+    // -----------------
     data.items.forEach(item => {
         itemsDiv.innerHTML += `
             <div class="admin-card">
@@ -71,22 +74,40 @@ async function loadAdminData() {
         `;
     });
 
+    // -----------------
+    // SEPARATE CLAIMS & INQUIRIES
+    // -----------------
+    let claimCards = "";
+    let inquiryCards = "";
+
     data.claims.forEach(claim => {
-    claimsDiv.innerHTML += `
-        <div class="admin-card">
-            <p><strong>${claim.name}</strong> requested item ${claim.itemId}</p>
-            <p>Type: ${claim.type}</p>
-            <p>${claim.message}</p>
-            <p>Status: ${claim.status}</p>
+        const card = `
+            <div class="admin-card">
+                <p><strong>${claim.name}</strong></p>
+                <p>Item ID: ${claim.itemId}</p>
+                <p>Message: ${claim.message}</p>
+                <p>Status: ${claim.status}</p>
 
-            ${claim.status === "pending" ? `
-                <button onclick="approveClaim(${claim.id})">Approve</button>
-                <button onclick="rejectClaim(${claim.id})">Reject</button>
-            ` : ""}
-        </div>
+                ${claim.status === "pending" ? `
+                    <button onclick="approveClaim(${claim.id})">Approve</button>
+                    <button onclick="rejectClaim(${claim.id})">Reject</button>
+                ` : ""}
+            </div>
+        `;
+
+        if (claim.type === "claim") {
+            claimCards += card;
+        } else {
+            inquiryCards += card;
+        }
+    });
+
+    claimsDiv.innerHTML = `
+        <h2>Claims</h2>
+        ${claimCards}
+        <h2>Inquiries</h2>
+        ${inquiryCards}
     `;
-});
-
 }
 
 async function approveItem(id) {
@@ -99,8 +120,20 @@ async function deleteItem(id) {
     loadAdminData();
 }
 
+async function approveClaim(id) {
+    await fetch('/approve-claim/' + id, { method: 'POST' });
+    loadAdminData();
+}
+
+async function rejectClaim(id) {
+    await fetch('/reject-claim/' + id, { method: 'POST' });
+    loadAdminData();
+}
+
 loadAdminData();
 </script>
+
+
 
 
 

@@ -46,69 +46,79 @@ let claims = [];
 app.post('/submit-item', upload.single('photo'), (req, res) => {
 
     const newItem = {
-    id: items.length + 1,
-    name: req.body.item_name,
-    description: req.body.description,
-    category: req.body.category,
-    date: req.body.date,
-    studentName: req.body.name,
-    studentEmail: req.body.email,
-    photo: req.file ? req.file.filename : null,
-    approved: false   // NEW
-};
-
+        id: items.length + 1,
+        name: req.body.item_name,
+        description: req.body.description,
+        category: req.body.category,
+        date: req.body.date,
+        studentName: req.body.name,
+        studentEmail: req.body.email,
+        photo: req.file ? req.file.filename : null,
+        approved: false
+    };
 
     items.push(newItem);
-
     res.redirect('/search.html');
 });
 
 // ----------------------------
-// Get All Items (Search Page)
+// Get Approved Items (Search Page)
 // ----------------------------
 app.get('/items', (req, res) => {
     const approvedItems = items.filter(item => item.approved);
     res.json(approvedItems);
 });
 
-
 // ----------------------------
-// Submit Claim
+// Submit Claim OR Inquiry
 // ----------------------------
 app.post('/submit-claim', (req, res) => {
 
     const newClaim = {
-    id: claims.length + 1,
-    itemId: req.body.item_id,
-    name: req.body.name,
-    email: req.body.email,
-    type: req.body.requestType,
-    message: req.body.message,
-    status: "pending"
-};
-
+        id: claims.length + 1,
+        itemId: parseInt(req.body.item_id),
+        name: req.body.name,
+        email: req.body.email,
+        type: req.body.requestType, // "claim" or "inquiry"
+        message: req.body.message,
+        status: "pending"
+    };
 
     claims.push(newClaim);
-
     res.redirect('/search.html');
 });
 
+// ----------------------------
+// Approve Claim / Resolve Inquiry
+// ----------------------------
 app.post('/approve-claim/:id', (req, res) => {
     if (!req.session.isAdmin) return res.status(403).send("Not authorized");
 
     const claim = claims.find(c => c.id == req.params.id);
+    if (!claim) return res.status(404).send("Claim not found");
 
-    if (claim) {
-        claim.status = "approved";
+    claim.status = "approved";
 
-        // Remove the item when approved
-        items = items.filter(i => i.id != claim.itemId);
+    // ONLY remove item if it is a CLAIM
+    if (claim.type === "claim") {
+        items = items.filter(item => item.id !== claim.itemId);
     }
 
     res.sendStatus(200);
 });
 
+// ----------------------------
+// Reject Claim / Inquiry
+// ----------------------------
+app.post('/reject-claim/:id', (req, res) => {
+    if (!req.session.isAdmin) return res.status(403).send("Not authorized");
 
+    const claim = claims.find(c => c.id == req.params.id);
+    if (!claim) return res.status(404).send("Claim not found");
+
+    claim.status = "rejected";
+    res.sendStatus(200);
+});
 
 // ----------------------------
 // Admin Login
@@ -118,12 +128,11 @@ const ADMIN_PASSWORD = "admin123";
 app.post('/admin-login', (req, res) => {
     if (req.body.password === ADMIN_PASSWORD) {
         req.session.isAdmin = true;
-        res.redirect('/admin-dashboard');  // NOT .html
+        res.redirect('/admin-dashboard');
     } else {
         res.send("Wrong password");
     }
 });
-
 
 // ----------------------------
 // Protected Admin Dashboard
@@ -136,16 +145,8 @@ app.get('/admin-dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'));
 });
 
-app.get('/admin', (req, res) => {
-    if (req.session.isAdmin) {
-        return res.redirect('/admin-dashboard');
-    } else {
-        return res.redirect('/admin-login.html');
-    }
-});
-
 // ----------------------------
-// Admin Data (Protected API)
+// Admin Data
 // ----------------------------
 app.get('/admin-data', (req, res) => {
     if (!req.session.isAdmin) {
@@ -155,6 +156,9 @@ app.get('/admin-data', (req, res) => {
     res.json({ items, claims });
 });
 
+// ----------------------------
+// Approve Item Posting
+// ----------------------------
 app.post('/approve-item/:id', (req, res) => {
     if (!req.session.isAdmin) return res.status(403).send("Not authorized");
 
@@ -164,6 +168,9 @@ app.post('/approve-item/:id', (req, res) => {
     res.sendStatus(200);
 });
 
+// ----------------------------
+// Delete Item
+// ----------------------------
 app.post('/delete-item/:id', (req, res) => {
     if (!req.session.isAdmin) return res.status(403).send("Not authorized");
 
@@ -172,7 +179,7 @@ app.post('/delete-item/:id', (req, res) => {
 });
 
 // ----------------------------
-// Logout Route (Optional but smart)
+// Logout
 // ----------------------------
 app.get('/admin-logout', (req, res) => {
     req.session.destroy(() => {
@@ -186,14 +193,3 @@ app.get('/admin-logout', (req, res) => {
 app.listen(3000, () => {
     console.log("Server running at http://localhost:3000");
 });
-
-
-async function approveClaim(id) {
-    await fetch('/approve-claim/' + id, { method: 'POST' });
-    loadAdminData();
-}
-
-async function rejectClaim(id) {
-    await fetch('/reject-claim/' + id, { method: 'POST' });
-    loadAdminData();
-}
