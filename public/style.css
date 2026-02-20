@@ -10,15 +10,12 @@
 
 :root {
      /* Colors */
-    /* --white-color: #fff; */
-    --white-color:#816C61;
+    /* --white-color:#816C61; */
+    --white-color:#FFD700;
     --dark-color: #F7DB91;
-    /* --primary-color:#FFAAB8 ; */
-    --primary-color:#CFCFEA;
-    /* --secondary-color: #BDD9BF; */
+    /* --primary-color:#CFCFEA; */
+    --primary-color:#551A8B;
     --secondary-color:#A89B9D;
-    --light-pink-color: #FFD8DF;
-    --light-green-color: #F0FFDF;
 
     /* Font Size */
     --font-size-s: 0.9rem;
@@ -142,7 +139,8 @@ a {
 
 .hero-section .hero-details .title {
     font-size: var(--font-size-xl);
-    color: var(--secondary-color);
+    /* color: var(--secondary-color); */
+    color: var(--white-color);
     font-family: 'Courier New', Courier, monospace;
 }
 .hero-section .hero-details .description {
