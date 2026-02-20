@@ -242,3 +242,10 @@ button:hover, .btn:hover {
     min-height: 100vh;
 }
 
+
+
+.admin-login {
+    min-height: 100vh;   
+    padding: 120px 20px 60px; 
+    background: var(--secondary-color);
+}
