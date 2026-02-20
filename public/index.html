@@ -52,24 +52,3 @@
 </body>
 </html>
 
-<script>
-async function loadItems() {
-    const response = await fetch('/items');
-    const items = await response.json();
-
-    const container = document.getElementById("items-container");
-    container.innerHTML = "";
-
-    items.forEach(item => {
-        container.innerHTML += `
-            <div>
-                <h3>${item.name}</h3>
-                <p>${item.description}</p>
-                <p>ID: ${item.id}</p>
-            </div>
-        `;
-    });
-}
-
-loadItems();
-</script>
